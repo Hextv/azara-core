@@ -2,9 +2,10 @@
 
 ### Development Set Up
 
+- Fork this repository
 - cd into your TS-WoW installation directory `modules` folder.
 - Delete any other modules present.
-- `git clone git@github.com:Shadows-of-Azara/azara-core.git azara-core`
+- `git clone https://github.com/[username]/azara-core.git azara-core`
 - In your TS-WoW directory find `node.conf` and set the following.
     - Default.Client = "C:\\\PathToClient\\\Here"
     - Default.Realm = "azara-core.realm"
