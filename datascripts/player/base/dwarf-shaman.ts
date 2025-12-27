@@ -12,7 +12,7 @@ const ORC_SHAMAN_OUTFIT = DBC.CharStartOutfit.queryAll({ ClassID: SHAMAN_CLASS.I
 ORC_SHAMAN_OUTFIT.forEach(entry => {
     entry.clone(Ids.CharStartOutfit.id())
         .ClassID.set(SHAMAN_CLASS.ID)
-        .RaceID.set(3)
+        .RaceID.set(DWARF_RACE_ID)
 })
 
 // Starting action bars
