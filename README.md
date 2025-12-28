@@ -6,11 +6,12 @@
 - cd into your TS-WoW installation directory `modules` folder.
 - Delete any other modules present.
 - `git clone https://github.com/[username]/azara-core.git azara-core`
+- Copy `azara-core/config/worldserver.conf` to `azara-core/realms/development`, overwrite if anything else there.
 - In your TS-WoW directory find `node.conf` and set the following.
     - Default.Client = "C:\\\PathToClient\\\Here"
-    - Default.Realm = "azara-core.realm"
+    - Default.Realm = "azara-core.development"
     - Default.Dataset = "azara-core.dataset"
-    - AutoStart.Realms = ["azara-core.realm"]
+    - AutoStart.Realms = ["azara-core.development"]
 - Open VS Code and open your TS-WoW directory folder.
 - In the window click Terminal -> New Terminal
 - `npm run start`
