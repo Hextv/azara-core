@@ -1,0 +1,1 @@
+console.log("Building shadows-of-azara.core");
