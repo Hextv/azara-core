@@ -62,6 +62,28 @@ CLASS_ICON_TCOORDS = {
 	["DEATHKNIGHT"]	= {0.25, 0.49609375, 0.5, 0.75},
 };
 
+DK_CLASS_ID = 6;
+
+function ReResetCharCustomize()
+    -- Races: Human (1), Dwarf (2), Night Elf (3)
+    local allowedRaces = {1, 2, 3}
+    local selectedRace = allowedRaces[math.random(#allowedRaces)]
+    
+    SetSelectedRace(selectedRace)
+    RandomizeCharCustomization();
+    
+    local validClasses = {}
+    for i = 1, MAX_CLASSES_PER_RACE do
+        if i ~= DK_CLASS_ID and IsRaceClassValid(selectedRace, i) then
+            table.insert(validClasses, i)
+        end
+    end
+    
+    local selectedClass = validClasses[math.random(#validClasses)]
+	SetSelectedClass(selectedClass)
+	SetCharacterClass(selectedClass)
+end
+
 function CharacterCreate_OnLoad(self)
 	self:SetSequence(0);
 	self:SetCamera(0);
@@ -102,6 +124,7 @@ function CharacterCreate_OnShow()
 	else
 		--randomly selects a combination
 		ResetCharCustomize();
+		ReResetCharCustomize();
 		CharacterCreateNameEdit:SetText("");
 		CharCreateRandomizeButton:Show();
 	end
@@ -110,7 +133,17 @@ function CharacterCreate_OnShow()
 	SetCharacterRace(GetSelectedRace());
 	
 	CharacterCreateEnumerateClasses(GetAvailableClasses());
-	local_,_,index = GetSelectedClass();
+	local _,_,index = GetSelectedClass();
+	-- If Death Knight or invalid, pick a valid class
+	if index == DK_CLASS_ID or not IsRaceClassValid(GetSelectedRace(), index) then
+	    for i = 1, MAX_CLASSES_PER_RACE do
+	        if i ~= DK_CLASS_ID and IsRaceClassValid(GetSelectedRace(), i) then
+	            index = i
+	            break
+	        end
+	    end
+	end
+	SetSelectedClass(index);
 	SetCharacterClass(index);
 
 	SetCharacterGender(GetSelectedSex())
@@ -379,8 +412,17 @@ function CharacterRace_OnClick(self, id)
 		CharacterCreateEnumerateClasses(GetAvailableClasses());
 		local _,_,classIndex = GetSelectedClass();
 		if ( PAID_SERVICE_TYPE ) then
-			classIndex = PaidChange_GetCurrentClassIndex();
+		    classIndex = PaidChange_GetCurrentClassIndex();
 		end
+		if classIndex == DK_CLASS_ID or not IsRaceClassValid(id, classIndex) then
+		    for i = 1, MAX_CLASSES_PER_RACE do
+		        if i ~= DK_CLASS_ID and IsRaceClassValid(id, i) then
+		            classIndex = i
+		            break
+		        end
+		    end
+		end
+		SetSelectedClass(classIndex);
 		SetCharacterClass(classIndex);
 		
 		-- Hair customization stuff
@@ -563,4 +605,3 @@ function CharacterChangeFixup()
 		end
 	end
 end
-
