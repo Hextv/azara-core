@@ -1,79 +1,122 @@
-import { std, SQL } from "wow/wotlk";
-import { AchievementCategory } from "wow/wotlk/std/Achievement/AchievementCategory";
+import { std } from "wow/wotlk";
+import { azaraSTD } from "shadows-of-azara.std"
 
-export class Achievement {
-    /**
-     * Recursively removes an Achievement and any achievements that supersede it.
-     * Also cleans up all related SQL table entries.
-     * @param id The Achievement ID.
-     */
-    removeByID(id: number) {
-        const achievement = std.Achievements.load(id);
+// Delete achievements
+[
+    16,
+    31,
+    42,
+    43,
+    44,
+    45,
+    46,
+    227,
+    229,
+    230,
+    231,
+    246,
+    388,
+    389,
+    396,
+    556,
+    557,
+    558,
+    559,
+    604,
+    610,
+    611,
+    612,
+    613,
+    614,
+    701,
+    705,
+    727,
+    730,
+    735,
+    907,
+    908,
+    941,
+    942,
+    945,
+    948,
+    953,
+    973,
+    1165,
+    1182,
+    1187,
+    1206,
+    1244,
+    1254,
+    1283,
+    1284,
+    1285,
+    1286,
+    1287,
+    1288,
+    1289,
+    1576,
+    1658,
+    1681,
+    1832,
+    1833,
+    1956,
+    2016,
+    2076,
+    2077,
+    2078,
+    2084,
+    2097,
+    2136,
+    2137,
+    2138,
+    2556,
+    2557,
+    2957,
+    2958,
+    3838,
+    4476,
+    4602,
+    4603
+].forEach(id => azaraSTD.Achievement.removeByID(id));
 
-        if (!achievement || achievement.isDeleted()) {
-            return;
-        }
-
-        std.Achievements.queryAll({ Previous: id }).forEach((child) => {
-            this.removeByID(child.ID);
-        });
-
-        std.Achievements.queryAll({ Shares_Criteria: id }).forEach((dependent) => {
-            dependent.row.Shares_Criteria.set(0);
-        });
-
-        const criteria = achievement.Criteria.get();
-        const criteriaIds = criteria.map((c: any) => c.ID);
-
-        criteria.forEach((c: any) => {
-            c.row.delete();
-        });
-
-        achievement.delete();
-
-        const reward = SQL.achievement_reward.query({ ID: id });
-        if (reward) {
-            reward.delete();
-        }
-
-        SQL.achievement_reward_locale.queryAll({ ID: id }).forEach((locale) => {
-            locale.delete();
-        });
-
-        SQL.player_factionchange_achievement.queryAll({ alliance_id: id }).forEach((row) => {
-            row.delete();
-        });
-        SQL.player_factionchange_achievement.queryAll({ horde_id: id }).forEach((row) => {
-            row.delete();
-        });
-
-        SQL.access_requirement.queryAll({ completed_achievement: id }).forEach((req) => {
-            req.completed_achievement.set(0);
-        });
-
-        criteriaIds.forEach((criteriaId: number) => {
-            SQL.achievement_criteria_data.queryAll({ criteria_id: criteriaId }).forEach((data) => {
-                data.delete();
-            });
-        });
-    }
-
-    /**
-     * Removes all of the Achievements for a specific Category 
-     * and then removes the Category itself.
-     * @param category The Parent Achievement Category.
-     */
-    removeCategory(category: AchievementCategory) {
-        if (!category || category.isDeleted()) {
-            return;
-        }
-
-        std.Achievements.queryAll({ Category: category.ID }).forEach((value) => {
-            this.removeByID(value.ID);
-        });
-
-        category.delete();
-    }
-}
-
-export const AchievementsRegistry = new Achievement();
+// Delete categories
+[
+    81,
+    155,
+    165,
+    170,
+    171,
+    172,
+    14777,
+    14778,
+    14779,
+    14780,
+    14801,
+    14802,
+    14803,
+    14804,
+    14805,
+    14806,
+    14808,
+    14821,
+    14822,
+    14823,
+    14861,
+    14862,
+    14863,
+    14864,
+    14865,
+    14866,
+    14881,
+    14901,
+    14921,
+    14922,
+    14923,
+    14961,
+    14962,
+    15001,
+    15002,
+    15003,
+    15041,
+    15042
+].forEach(id => azaraSTD.Achievement.removeCategory(std.AchievementCategory.load(id)));
