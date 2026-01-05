@@ -16,6 +16,22 @@ export class Creature extends CreatureTemplateRegistryClass {
             .ItemID2.set(secondary)
             .ItemID3.set(ranged);
     }
+
+    /**
+     * Builds a re-usable Dummy Bunny often used for hidden behaviour / spell targetting.
+     * @param id Unique ID.
+     */
+    createDummyBunny(id: string): CreatureTemplate {
+        return std.CreatureTemplates.create('azara-core', id)
+            .Name.enGB.set('Dummy Trigger')
+            .Models.addIds(328)
+            .Type.NONE.set()
+            .FactionTemplate.NEUTRAL_PASSIVE.set()
+            .UnitFlags.NOT_SELECTABLE.set(true)
+            .UnitFlags.IMMUNE_TO_NPC.set(true)
+            .UnitFlags.IMMUNE_TO_PC.set(true)
+            .FlagsExtra.set(128);
+    }
 }
 
 export const CreatureTemplateRegistry = new Creature();
