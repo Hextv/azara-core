@@ -77,7 +77,7 @@ import { azaraSTD } from "shadows-of-azara.std"
     4476,
     4602,
     4603
-].forEach(id => azaraSTD.Achievement.removeByID(id));
+].forEach(id => azaraSTD.Achievements.removeByID(id));
 
 // Delete categories
 [
@@ -119,4 +119,4 @@ import { azaraSTD } from "shadows-of-azara.std"
     15003,
     15041,
     15042
-].forEach(id => azaraSTD.Achievement.removeCategory(std.AchievementCategory.load(id)));
+].forEach(id => azaraSTD.Achievements.removeCategory(std.AchievementCategory.load(id)));
