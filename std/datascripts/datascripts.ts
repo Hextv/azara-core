@@ -5,6 +5,7 @@ import { EmotesRegistry } from "./emotes";
 import { GossipRegistry } from "./gossip";
 import { ItemRegistry } from "./items";
 import { QuestsRegistry } from "./quests";
+import { VendorsRegistry } from "./vendors";
 
 export const azaraSTD = {
     Achievements: AchievementsRegistry,
@@ -13,7 +14,8 @@ export const azaraSTD = {
     Emotes: EmotesRegistry,
     Gossip: GossipRegistry,
     Items: ItemRegistry,
-    Quests: QuestsRegistry
+    Quests: QuestsRegistry,
+    Vendors: VendorsRegistry
 };
 
 console.log("Initializing library shadows-of-azara.std");

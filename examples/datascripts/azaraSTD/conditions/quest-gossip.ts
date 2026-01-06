@@ -2,7 +2,7 @@ import { std } from "wow/wotlk";
 import { azaraSTD } from "shadows-of-azara.std";
 
 /** Create creature */
-export const CREATURE = std.CreatureTemplates.create("azara-core", "example-quest-gossip-creature")
+const CREATURE = std.CreatureTemplates.create("azara-core", "example-quest-gossip-creature")
     .Name.enGB.set("Quest Gossip Creature")
     .Level.set(20)
     .FactionTemplate.STORMWIND.set()

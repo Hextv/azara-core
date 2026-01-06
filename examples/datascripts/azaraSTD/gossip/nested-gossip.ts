@@ -3,7 +3,7 @@ import { GossipPair } from "shadows-of-azara.std/gossip";
 import { std } from "wow/wotlk";
 
 /** Create creature */
-export const CREATURE = std.CreatureTemplates.create("azara-core", "example-nested-gossip-creature")
+const CREATURE = std.CreatureTemplates.create("azara-core", "example-nested-gossip-creature")
     .Name.enGB.set("Nested Gossip Creature")
     .Level.set(20)
     .FactionTemplate.STORMWIND.set()

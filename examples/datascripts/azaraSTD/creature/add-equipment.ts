@@ -2,7 +2,7 @@ import { std } from "wow/wotlk";
 import { azaraSTD } from "shadows-of-azara.std";
 
 /** Create creature */
-export const CREATURE = std.CreatureTemplates.create("azara-core", "example-add-equipment-creature")
+const CREATURE = std.CreatureTemplates.create("azara-core", "example-add-equipment-creature")
     .Name.enGB.set("Add Equipment Creature")
     .Level.set(20)
     .FactionTemplate.STORMWIND.set()
