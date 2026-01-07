@@ -1,21 +1,9 @@
-import { DBC, std } from "wow/wotlk";
-import { Ids } from "wow/wotlk/std/Misc/Ids";
+import { std } from "wow/wotlk";
 
-const PALADIN_CLASS = std.Classes.load("PALADIN");
-const NIGHTELF_RACE_ID = 4;
-const NEW_STARTER_WEAPON = 49778;
+const PALADIN = std.Classes.load("PALADIN");
+const NIGHT_ELF = 4;
 
-PALADIN_CLASS.Races.add(["NIGHTELF"] as any);
-
-// Starting outfit - clone from Human Paladin (Race ID 1)
-const HUMAN_PALADIN_OUTFIT = DBC.CharStartOutfit.queryAll({ ClassID: PALADIN_CLASS.ID, RaceID: 1 });
-
-HUMAN_PALADIN_OUTFIT.forEach(entry => {
-    const newOutfit = entry.clone(Ids.CharStartOutfit.id())
-        .ClassID.set(PALADIN_CLASS.ID)
-        .RaceID.set(NIGHTELF_RACE_ID)
-    newOutfit.ItemID.setIndex(0, NEW_STARTER_WEAPON)
-})
+PALADIN.Races.add(["NIGHTELF"]);
 
 // Starting action bars
 const actions = [
@@ -26,13 +14,5 @@ const actions = [
 ]
 
 actions.forEach(({ button, action }) => {
-    std.SQL.playercreateinfo_action.add(NIGHTELF_RACE_ID, PALADIN_CLASS.ID, button, { action, type: 0 });
+    std.SQL.playercreateinfo_action.add(NIGHT_ELF, PALADIN.ID, button, { action, type: 0 });
 })
-
-// Starting skills - Paladin weapon proficiencies
-std.EquipSkills.Swords1H.enableAutolearnClass("PALADIN")
-std.EquipSkills.Swords2H.enableAutolearnClass("PALADIN")
-
-// Remove Maces1H & Maces2H
-std.EquipSkills.Maces1H.Skill.get().Autolearn.clearPair("PALADIN", "NIGHTELF")
-std.EquipSkills.Maces2H.Skill.get().Autolearn.clearPair("PALADIN", "NIGHTELF")
