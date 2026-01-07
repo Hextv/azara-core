@@ -42,9 +42,10 @@ export class Holiday {
         SQL.game_event.queryAll({ holiday: id }).forEach(event => {
             event.world_event.set(5); // GAMEEVENT_INTERNAL - never handled in update
             event.holiday.set(0); // Unlink from holiday
-            // Set invalid times to ensure it never fires even if state changes
-            event.start_time.set('1970-01-01 00:00:00');
-            event.end_time.set('1970-01-01 00:00:00');
+            // Set times to a safe past date to ensure it never fires even if state changes
+            // Using 2000-01-01 instead of 1970-01-01 to avoid MySQL NO_ZERO_DATE issues
+            event.start_time.set('2000-01-01 00:00:00');
+            event.end_time.set('2000-01-01 00:00:00');
         });
 
         // Disable holiday_dates entries instead of deleting them
