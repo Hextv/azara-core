@@ -1,13 +1,13 @@
-import { AchievementsRegistry } from "./achievement";
-import { ConditionRegistry } from "./conditions";
-import { CreatureTemplateRegistry } from "./creature";
-import { EmotesRegistry } from "./emotes";
-import { GossipRegistry } from "./gossip";
-import { HolidaysRegistry } from "./holidays";
-import { ItemRegistry } from "./items";
-import { PlayerRegistry } from "./player";
-import { QuestsRegistry } from "./quests";
-import { VendorsRegistry } from "./vendors";
+import { AchievementsRegistry } from "./classes/achievement";
+import { ConditionRegistry } from "./classes/conditions";
+import { CreatureTemplateRegistry } from "./classes/creature";
+import { EmotesRegistry } from "./classes/emotes";
+import { GossipRegistry } from "./classes/gossip";
+import { HolidaysRegistry } from "./classes/holidays";
+import { ItemRegistry } from "./classes/items";
+import { PlayerRegistry } from "./classes/player";
+import { QuestsRegistry } from "./classes/quests";
+import { VendorsRegistry } from "./classes/vendors";
 
 export const azaraSTD = {
     Achievements: AchievementsRegistry,
