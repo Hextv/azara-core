@@ -1,3 +1,3 @@
-import { DBC, std } from "wow/wotlk";
+import { std } from "wow/wotlk";
 
 std.DBC.ChrRaces.findById(4).Name.enGB.set('Wood Elf')

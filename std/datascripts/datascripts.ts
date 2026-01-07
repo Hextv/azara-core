@@ -5,7 +5,7 @@ import { EmotesRegistry } from "./emotes";
 import { GossipRegistry } from "./gossip";
 import { HolidaysRegistry } from "./holidays";
 import { ItemRegistry } from "./items";
-import { LevelCapRegistry } from "./level-cap";
+import { PlayerRegistry } from "./player";
 import { QuestsRegistry } from "./quests";
 import { VendorsRegistry } from "./vendors";
 
@@ -17,7 +17,7 @@ export const azaraSTD = {
     Gossip: GossipRegistry,
     Holiday: HolidaysRegistry,
     Items: ItemRegistry,
-    LevelCap: LevelCapRegistry,
+    Player: PlayerRegistry,
     Quests: QuestsRegistry,
     Vendors: VendorsRegistry
 };

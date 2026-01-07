@@ -1,11 +1,9 @@
 import { SQL } from "wow/wotlk";
 
 /**
- * Utility class for handling level cap related issues.
- * When MaxPlayerLevel is set to a value (e.g., 60), various database entries may reference
- * higher levels or skill values that can't be reached, causing validation errors.
+ * Utility class for handling the player.
  */
-export class LevelCap {
+export class Player {
     /**
      * Calculates the maximum skill value for a given player level.
      * Formula: level > 60 ? 300 + ((level - 60) * 75) / 10 : level * 5
@@ -27,7 +25,7 @@ export class LevelCap {
      * 
      * @param maxLevel Maximum player level (e.g., 60)
      */
-    set(maxLevel: number) {
+    setMaxLevel(maxLevel: number) {
         const maxSkill = this.getMaxSkillValue(maxLevel);
 
         // Remove quest skill requirements
@@ -85,5 +83,5 @@ export class LevelCap {
     }
 }
 
-export const LevelCapRegistry = new LevelCap();
+export const PlayerRegistry = new Player();
 

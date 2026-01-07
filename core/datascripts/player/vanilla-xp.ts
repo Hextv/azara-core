@@ -1,10 +1,10 @@
 import { azaraSTD } from "shadows-of-azara.std";
 
 // Set level cap to 60 and fix all related validation errors
-azaraSTD.LevelCap.set(60);
+azaraSTD.Player.setMaxLevel(60);
 
 // Set vanilla XP values for levels 1-60
-azaraSTD.LevelCap.setXpForLevel([
+azaraSTD.Player.setXpForLevel([
     [1, 400],
     [2, 900],
     [3, 1400],
