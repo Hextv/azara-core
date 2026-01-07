@@ -57,16 +57,25 @@ end
 
 
 -- [[ AchievementFrame ]] --
-function AchievementFrame_ToggleAchievementFrame()
+
+function AchievementFrame_ToggleAchievementFrame(toggleStatFrame)
 	AchievementFrameComparison:Hide();
 	AchievementFrameTab_OnClick = AchievementFrameBaseTab_OnClick;
-	if ( AchievementFrame:IsShown() and AchievementFrame.selectedTab == 1 ) then
+	if ( not toggleStatFrame ) then
+		if ( AchievementFrame:IsShown() and AchievementFrame.selectedTab == 1 ) then
 			HideUIPanel(AchievementFrame);
 		else
 			ShowUIPanel(AchievementFrame);
 			AchievementFrameTab_OnClick(1);
 		end
 		return;
+	end
+	if ( AchievementFrame:IsShown() and AchievementFrame.selectedTab == 2 ) then
+		HideUIPanel(AchievementFrame);
+	else
+		ShowUIPanel(AchievementFrame);
+		AchievementFrameTab_OnClick(2);
+	end
 end
 
 function AchievementFrame_DisplayComparison (unit)
@@ -312,15 +321,52 @@ function AchievementFrameCategories_Update ()
 		end
 	end
 	
+	-- Helper function to check if category has any visible achievements
+	local function CategoryHasVisibleAchievements(categoryID)
+		if categoryID == "summary" then
+			return true; -- Always show summary
+		end
+		local numAchievements = GetCategoryNumAchievements(categoryID);
+		if numAchievements and numAchievements > 0 then
+			-- Check if any achievements are visible (not hidden)
+			for j = 1, numAchievements do
+				local achievementID, name, points, completed, month, day, year, description, flags, icon, rewardText = GetAchievementInfo(categoryID, j);
+				if achievementID then
+					-- Check if achievement is not hidden (ACHIEVEMENT_FLAGS_HIDDEN = 0x000002)
+					local isHidden = bit.band(flags or 0, 0x000002) == 0x000002;
+					if not isHidden then
+						return true;
+					end
+				end
+			end
+		end
+		-- Check subcategories recursively
+		for _, subcategory in next, categories do
+			if subcategory.parent == categoryID then
+				if CategoryHasVisibleAchievements(subcategory.id) then
+					return true;
+				end
+			end
+		end
+		return false;
+	end
+	
 	for i, category in next, categories do
 		if ( not category.hidden ) then
-			tinsert(displayCategories, category);
+			-- Only add category if it has visible achievements
+			if CategoryHasVisibleAchievements(category.id) then
+				tinsert(displayCategories, category);
+			end
 		elseif ( parent and category.id == parent ) then
 			category.collapsed = false;
-			tinsert(displayCategories, category);
+			if CategoryHasVisibleAchievements(category.id) then
+				tinsert(displayCategories, category);
+			end
 		elseif ( parent and category.parent and category.parent == parent ) then
 			category.hidden = false;
-			tinsert(displayCategories, category);
+			if CategoryHasVisibleAchievements(category.id) then
+				tinsert(displayCategories, category);
+			end
 		end
 	end
 	
@@ -1816,6 +1862,96 @@ end
 function AchievementFrameSummary_Update(isCompare)
 	AchievementFrameSummaryCategoriesStatusBar_Update();
 	AchievementFrameSummary_UpdateAchievements(GetLatestCompletedAchievements());
+	
+	-- Hide empty summary categories after update
+	-- Summary categories are created in XML with IDs: 92, 96, 97, 95, 168, 169, 201, etc.
+	local function CategoryHasVisibleAchievements(categoryID)
+		local numAchievements = GetCategoryNumAchievements(categoryID);
+		if numAchievements and numAchievements > 0 then
+			for j = 1, numAchievements do
+				local achievementID, name, points, completed, month, day, year, description, flags, icon, rewardText = GetAchievementInfo(categoryID, j);
+				if achievementID then
+					local isHidden = bit.band(flags or 0, 0x000002) == 0x000002;
+					if not isHidden then
+						return true;
+					end
+				end
+			end
+		end
+		-- Check subcategories
+		for _, category in next, ACHIEVEMENTUI_CATEGORIES do
+			if category.parent == categoryID then
+				if CategoryHasVisibleAchievements(category.id) then
+					return true;
+				end
+			end
+		end
+		return false;
+	end
+	
+	-- Collect visible categories and reposition them to fill gaps
+	-- Frames are named: AchievementFrameSummaryCategoriesCategory1, Category2, etc.
+	local visibleCategories = {};
+	local statusBar = AchievementFrameSummaryCategoriesStatusBar;
+	
+	-- First pass: identify visible categories
+	for i = 1, 20 do
+		local categoryFrame = _G["AchievementFrameSummaryCategoriesCategory"..i];
+		if categoryFrame then
+			local categoryID = categoryFrame:GetID();
+			if categoryID and categoryID > 0 then
+				if CategoryHasVisibleAchievements(categoryID) then
+					categoryFrame:Show();
+					table.insert(visibleCategories, categoryFrame);
+				else
+					categoryFrame:Hide();
+				end
+			end
+		else
+			break; -- No more frames
+		end
+	end
+	
+	-- Second pass: reposition visible categories in a 2-column grid
+	-- Categories are arranged: left column (odd indices), right column (even indices)
+	local lastLeftFrame = nil;
+	local lastRightFrame = nil;
+	
+	for i, categoryFrame in ipairs(visibleCategories) do
+		-- Determine if this should be in left or right column
+		-- Left column: 1st, 3rd, 5th, etc. (odd positions)
+		-- Right column: 2nd, 4th, 6th, etc. (even positions)
+		local isLeftColumn = ((i - 1) % 2 == 0);
+		
+		if isLeftColumn then
+			-- Left column: anchor below previous left, or below status bar if first
+			if lastLeftFrame then
+				categoryFrame:ClearAllPoints();
+				categoryFrame:SetPoint("TOPLEFT", lastLeftFrame, "BOTTOMLEFT", 0, -14);
+			else
+				categoryFrame:ClearAllPoints();
+				categoryFrame:SetPoint("TOPLEFT", statusBar, "BOTTOMLEFT", 0, -24);
+			end
+			lastLeftFrame = categoryFrame;
+		else
+			-- Right column: anchor to the right of the corresponding left column item
+			local correspondingLeftIndex = i - 1;
+			if visibleCategories[correspondingLeftIndex] then
+				categoryFrame:ClearAllPoints();
+				categoryFrame:SetPoint("TOPLEFT", visibleCategories[correspondingLeftIndex], "TOPRIGHT", 20, 0);
+			else
+				-- Fallback: anchor below previous right, or below status bar
+				if lastRightFrame then
+					categoryFrame:ClearAllPoints();
+					categoryFrame:SetPoint("TOPLEFT", lastRightFrame, "BOTTOMLEFT", 0, -14);
+				else
+					categoryFrame:ClearAllPoints();
+					categoryFrame:SetPoint("TOPLEFT", statusBar, "BOTTOMLEFT", 0, -24);
+				end
+			end
+			lastRightFrame = categoryFrame;
+		end
+	end
 end
 
 function AchievementFrameSummary_UpdateAchievements(...)
@@ -2001,8 +2137,57 @@ function AchievementFrameSummaryCategory_OnEvent (self, event, ...)
 end
 
 function AchievementFrameSummaryCategory_OnShow (self)
-	local totalAchievements, totalCompleted = AchievementFrame_GetCategoryTotalNumAchievements(self:GetID(), true);
+	local id = self:GetID();
+	local totalAchievements, totalCompleted = AchievementFrame_GetCategoryTotalNumAchievements(id, true);
 	
+	-- Check if category has any visible achievements (not hidden)
+	local hasVisibleAchievements = false;
+	if totalAchievements and totalAchievements > 0 then
+		local categoryNumAchievements = GetCategoryNumAchievements(id);
+		if categoryNumAchievements and categoryNumAchievements > 0 then
+			for j = 1, categoryNumAchievements do
+				local achievementID, name, points, completed, month, day, year, description, flags, icon, rewardText = GetAchievementInfo(id, j);
+				if achievementID then
+					local isHidden = bit.band(flags or 0, 0x000002) == 0x000002;
+					if not isHidden then
+						hasVisibleAchievements = true;
+						break;
+					end
+				end
+			end
+		end
+		-- Also check subcategories
+		if not hasVisibleAchievements then
+			for _, category in next, ACHIEVEMENTUI_CATEGORIES do
+				if category.parent == id then
+					local subNumAchievements = GetCategoryNumAchievements(category.id);
+					if subNumAchievements and subNumAchievements > 0 then
+						for j = 1, subNumAchievements do
+							local achievementID, name, points, completed, month, day, year, description, flags, icon, rewardText = GetAchievementInfo(category.id, j);
+							if achievementID then
+								local isHidden = bit.band(flags or 0, 0x000002) == 0x000002;
+								if not isHidden then
+									hasVisibleAchievements = true;
+									break;
+								end
+							end
+						end
+						if hasVisibleAchievements then
+							break;
+						end
+					end
+				end
+			end
+		end
+	end
+	
+	-- Hide category if it has no visible achievements
+	if not hasVisibleAchievements then
+		self:Hide();
+		return;
+	end
+	
+	self:Show();
 	self.text:SetText(string.format("%d/%d", totalCompleted, totalAchievements));
 	self:SetMinMaxValues(0, totalAchievements);
 	self:SetValue(totalCompleted);

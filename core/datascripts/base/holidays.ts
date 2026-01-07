@@ -1,12 +1,8 @@
-import { SQL, std } from "wow/wotlk";
+import { azaraSTD } from "shadows-of-azara.std";
+import { std } from "wow/wotlk";
 
-// Clear all existing holidays from the DBC
-std.Holidays.queryAll({}).forEach(holiday => {
-    holiday.delete();
+// Disable all existing holidays by clearing their data (instead of deleting)
+// This preserves the holiday entries but removes all their content
+std.Holidays.queryAll({}).forEach((holiday) => {
+    azaraSTD.Holiday.disableHoliday(holiday.ID);
 });
-
-// Set holidays far in the future
-SQL.game_event.queryAll({}).forEach(event => {
-    event.start_time.set('2030-01-01 00:00:00')
-    event.end_time.set('2030-01-01 00:00:01')
-})

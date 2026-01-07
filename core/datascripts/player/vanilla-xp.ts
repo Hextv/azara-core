@@ -1,8 +1,10 @@
-import { SQL } from "wow/wotlk";
+import { azaraSTD } from "shadows-of-azara.std";
 
-SQL.player_xp_for_level.queryAll({}).forEach(v => v.delete());
+// Set level cap to 60 and fix all related validation errors
+azaraSTD.LevelCap.set(60);
 
-[
+// Set vanilla XP values for levels 1-60
+azaraSTD.LevelCap.setXpForLevel([
     [1, 400],
     [2, 900],
     [3, 1400],
@@ -63,4 +65,4 @@ SQL.player_xp_for_level.queryAll({}).forEach(v => v.delete());
     [58, 202300],
     [59, 209800],
     [60, 217400]
-].forEach(v => { SQL.player_xp_for_level.add(v[0], { Experience: v[1] }) });
+]);

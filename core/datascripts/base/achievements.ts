@@ -1,4 +1,3 @@
-import { std } from "wow/wotlk";
 import { azaraSTD } from "shadows-of-azara.std"
 
 // Delete achievements
@@ -77,7 +76,7 @@ import { azaraSTD } from "shadows-of-azara.std"
     4476,
     4602,
     4603
-].forEach(id => azaraSTD.Achievements.removeByID(id));
+].forEach(id => azaraSTD.Achievements.disableByID(id));
 
 // Delete categories
 [
@@ -119,4 +118,4 @@ import { azaraSTD } from "shadows-of-azara.std"
     15003,
     15041,
     15042
-].forEach(id => azaraSTD.Achievements.removeCategory(std.AchievementCategory.load(id)));
+].forEach(id => azaraSTD.Achievements.disableCategoryById(id));
