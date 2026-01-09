@@ -33,6 +33,10 @@ realms/*/anticheat*
 *.png~
 
 *.noggitproj
+assets/maps/areas.json
+assets/maps/assets/noggit_mmap_filters.json
+assets/maps/assets/noggit_object_selection_groups.json
+assets/maps/assets/uid.ini
 
 *.dll
 !deploy/*.dll
