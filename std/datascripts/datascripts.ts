@@ -2,6 +2,7 @@ import { AchievementsRegistry } from "./classes/achievement";
 import { ConditionRegistry } from "./classes/conditions";
 import { CreatureTemplateRegistry } from "./classes/creature";
 import { EmotesRegistry } from "./classes/emotes";
+import { FishingRegistry } from "./classes/fishing";
 import { GossipRegistry } from "./classes/gossip";
 import { HolidaysRegistry } from "./classes/holidays";
 import { ItemRegistry } from "./classes/items";
@@ -14,6 +15,7 @@ export const azaraSTD = {
     Conditions: ConditionRegistry,
     Creatures: CreatureTemplateRegistry,
     Emotes: EmotesRegistry,
+    Fishing: FishingRegistry,
     Gossip: GossipRegistry,
     Holiday: HolidaysRegistry,
     Items: ItemRegistry,
